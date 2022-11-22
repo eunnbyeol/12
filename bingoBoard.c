@@ -2,8 +2,8 @@
 #include "bingoBoard.h"
 
 #define BINGONUM_HOLE -1
-#define BINGO_NUMSTATUS_ABSENT -1
-#define BINGO_NUMSTATUS_PRESENT 0
+
+
 
 static int bingoBoard[N_SIZE][N_SIZE];
 static int numberStatus[N_SIZE*N_SIZE];
@@ -19,26 +19,33 @@ int bingo_checkNum(int selNum)
 
 void bingo_init(void)
 {
-	int i, j;
-	int cnt = 1;
+	int i, j, k;
+	int randNum; //랜덤 번호 (몇번쨰 숫자를 선택) 
+	int maxNum = N_SIZE*N_SIZE; //현재 남아있는 숫 
 	
-	for(i=0;i<N_SIZE;i++)
-	    for(j=0;j<N_SIZE;j++)
-	    {
-	    	if (cnt == 15)
-	    	{
-	    		bingoBoard[i][j] = BINGONUM_HOLE;
-	    		numberStatus[cnt-1]= BINGONUM_HOLE;
-	    		cnt++;
-			}
-			else
+	for (i=0;i<N_SIZE*N_SIZE;i++)
+		numberStatus[i] = BINGO_NUMSTATUS_ABSENT;
+		
+	for (i=0;i<N_SIZE;i++)
+		for (j=0;j<N_SIZE;j++)
+		{
+			randNum = rand()%maxNum; //랜덤 숫자 선택  
+			
+			for (k=0;k<N_SIZE*N_SIZE;k++)//각 숫자에 대해 따져보기  
 			{
-				numberStatus[cnt-1]= i*N_SIZE + j;
-				bingoBoard[i][j] = cnt++;
+				if (numberStatus[k] == BINGO_NUMSTATUS_ABSENT ) //숫자 k+1이 아직 할당이 안되어 있다면  
+				{
+					if (randNum == 0) //k+1 이 randNum번째 숫자이면  
+						break;
+					else
+						randNum--; //그렇지 않으면 하나 줄임  
+				}
 			}
-			   
-	   	}
-	
+			//숫자 k+1을 할당 
+			numberStatus[k] = i*N_SIZE + j;
+			bingoBoard[i][j] = k+1;
+			maxNum--;
+		}
 }
 
 void bingo_print(void)
@@ -50,13 +57,6 @@ void bingo_print(void)
 	    {
 	    	if (bingoBoard[i][j] == BINGONUM_HOLE)
 	    	    printf("X\t");
-	    	    
-	    	    
-	    	    
-	    	    
-	    	    
-	    	    
-	    	    
 	    	    
 	    	else
 			    printf("%i\t", bingoBoard[i][j]);
@@ -70,31 +70,67 @@ void bingo_print(void)
 
 void bingo_inputNum(int sel)
 {
-	int row_index;
-	row_index = numberStatus[sel-1]/N_SIZE;
-	int col_index;
-	col_index = numberStatus[sel-1]%N_SIZE;
-	bingoBoard[row_index][col_index] = BINGONUM_HOLE;
+	int row, col;
+	row = numberStatus[sel-1]/N_SIZE;
+	col = numberStatus[sel-1]%N_SIZE;
+	
+	bingoBoard[row][col] = BINGONUM_HOLE;
 	numberStatus[sel-1] = BINGONUM_HOLE;
+
 }
 
-int bingo_countCompletedLine()
-{
-	int i, j;
-	int cnt=0;
-	int checkBingo;
+int bingo_countCompletedLine(void)
+	{
+		int i, j;
+		int cnt = 0;
+		int checkBingo;
+		
+		//row
+		for(i=0;i<N_SIZE;i++)
+		{
+			checkBingo=1;
+			for(j=0;j<N_SIZE;j++)
+			    if (bingoBoard[i][j] > 0)
+			    {
+			    	checkBingo = 0;
+			    	break;
+				}
+				
+		if(checkBingo == 1)
+		   cnt++;
+		}
+		   
+		
+		//col
+		for(j=0;j<N_SIZE;j++)
+		{
+			checkBingo=1;
+			for(i=0;i<N_SIZE;i++)
+			    if (bingoBoard[i][j] > 0)
+			    {
+			    	checkBingo = 0;
+			    	break;
+				}
+		if(checkBingo == 1)
+		   cnt++;
+		}
+	    
+
 	
-	//check row
-	for (i=0;i<N_SIZE;i++) {
-		checkBingo = 1;
-		for (j=0;j<N_SIZE;j++){
-			if (bingoBoard[i][j] > 0) {
-				checkBingo = 0;
-				break;
+	    //diagonol
+	    checkBingo=1;
+	    for(i=0;i<N_SIZE;i++) 
+		{
+	    	if (bingoBoard[i][j] > 0)
+			    {
+			    	checkBingo = 0;
+			    	break;
 			}
 		}
-		if (checkBingo == 1) {
-			cnt++;
-		}
-	}
-}
+		if(checkBingo == 1)
+		   cnt++;
+		     
+		   
+		return cnt;
+    }
+	   
