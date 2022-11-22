@@ -2,9 +2,20 @@
 #include "bingoBoard.h"
 
 #define BINGONUM_HOLE -1
+#define BINGO_NUMSTATUS_ABSENT -1
+#define BINGO_NUMSTATUS_PRESENT 0
 
 static int bingoBoard[N_SIZE][N_SIZE];
 static int numberStatus[N_SIZE*N_SIZE];
+
+int bingo_checkNum(int selNum)
+{
+	if (numberStatus[selNum-1] == BINGONUM_HOLE) //입력한 숫자가 없을 떄 
+	    return BINGO_NUMSTATUS_ABSENT;
+   
+    else
+	    return BINGO_NUMSTATUS_PRESENT;
+}
 
 void bingo_init(void)
 {
@@ -65,7 +76,6 @@ void bingo_inputNum(int sel)
 	col_index = numberStatus[sel-1]%N_SIZE;
 	bingoBoard[row_index][col_index] = BINGONUM_HOLE;
 	numberStatus[sel-1] = BINGONUM_HOLE;
-	
 }
 
 int bingo_countCompletedLine()

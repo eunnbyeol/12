@@ -2,12 +2,33 @@
 #include <stdlib.h>
 #include <time.h>
 #include "bingoBoard.h" //bingoBoard.h ºÒ·¯¿È 
+#define BINGO_NUMSTATUS_ABSENT -1
+#define BINGO_NUMSTATUS_PRESENT 0
 
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
+	int get_number(void)
+	{
+		int selNum=0;
+		
+		do {
+			printf("select a number :");
+			scanf("%d", &selNum);
+			fflush(stdin);
+			
+			if (bingo_checkNum(selNum) == BINGO_NUMSTATUS_ABSENT)
+			{
+				printf("%i is not on the board! select other one.\n", selNum);
+			}
+		} while(selNum < 1 || selNum > N_SIZE*N_SIZE || bingo_checkNum(selNum) == BINGO_NUMSTATUS_ABSENT);
+	
+	    return selNum;
+	}
+	
 int main(int argc, char *argv[]) {
 	
 	srand((unsigned)time(NULL));
+	int selNum;
 	
 	//opening
 	printf("********************************************\n");
@@ -19,10 +40,11 @@ int main(int argc, char *argv[]) {
 	//game
 	bingo_init();
 	bingo_print();
-	bingo_inputNum(5);
+	selNum = get_number();
+	bingo_inputNum(selNum);
 	bingo_print();
-	bingo_inputNum(12);
-	bingo_print();
+	
+
 	//initialize bingo board
 	/*
 	while(game is not end) // È¦¼ö°¡ N_BINGOº¸´Ù ÀÛÀ½ 
