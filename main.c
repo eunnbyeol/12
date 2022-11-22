@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 	bingo_inputNum(5);
 	bingo_print();
 	bingo_inputNum(12);
-	
+	bingo_print();
 	//initialize bingo board
 	/*
 	while(game is not end) // 홀수가 N_BINGO보다 작음 
@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
 	     //bingo board print
 		 
 		 //print no. of completed line
-		 
+		 k
 		 //select a number
 		 
 		 //update the board status
